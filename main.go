@@ -114,9 +114,19 @@ func main() {
 		}(i)
 	}
 
+	// Запускаем таймер на 15 секунд для автоматических операций
+	fmt.Println("Запуск автоматических операций на 15 секунд...")
+	time.AfterFunc(15*time.Second, func() {
+		close(stopChan)
+	})
+
+	// Ждем завершения автоматических операций
+	wg.Wait()
+	fmt.Println("Автоматические операции завершены. Теперь можно вводить команды.")
+
 	// Обработка пользовательского ввода
 	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Println("Банковское приложение запущено. Доступные команды: balance, deposit, withdrawal, exit")
+	fmt.Println("Доступные команды: balance, deposit, withdrawal, exit")
 	
 	for {
 		fmt.Print("> ")
@@ -162,9 +172,6 @@ func main() {
 			
 		case "exit":
 			fmt.Println("Завершение работы приложения...")
-			close(stopChan)
-			wg.Wait() // ждем завершения всех горутин
-			fmt.Println("Приложение завершено.")
 			return
 			
 		default:
